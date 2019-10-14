@@ -1,6 +1,6 @@
 <div align=center>
 
-<img src="src/assets/images/test.jpg" style="width:280px;">
+<img src="src/assets/images/test.jpg" style="width:200px;">
 
 </div>
 
@@ -19,12 +19,19 @@
 ## ⚡️ 功能
 
 ✅ 命令行快建模板文件
+
 ✅ 图片压缩
-✅ less样式预编译支持
+
+✅ less样式预编译
+
 ✅ Typescript开发
+
 ✅ tslint代码检查
-🔲 云函数处理
+
+🔲 小程序云开发支持
+
 🔲 npm 依赖包自动打包
+
 🔲 分包处理
 
 ## 🔩 项目结构
