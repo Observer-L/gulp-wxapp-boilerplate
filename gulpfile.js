@@ -6,10 +6,12 @@ const less = require("gulp-less");
 const gulpif = require("gulp-if");
 const imagemin = require("gulp-imagemin");
 const sourcemaps = require("gulp-sourcemaps");
+const changed = require("gulp-changed");
 const ts = require("gulp-typescript");
 const postcss = require("gulp-postcss");
 const autoprefixer = require("autoprefixer");
 const htmlmin = require("gulp-htmlmin");
+const uglify = require("gulp-uglify-es").default;
 const tsProject = ts.createProject("tsconfig.json");
 const projectConfig = require("./package.json");
 const jsonTransform = require("gulp-json-transform");
@@ -42,12 +44,19 @@ const isProd = process.env.NODE_ENV === "production";
 /* 任务 */
 // 清除dist
 gulp.task("clean", () => {
-  return del(["./dist/**"]);
+  return del(["dist/**", "!dist/miniprogram_npm/**"]);
 });
 
 // 复制不包含less和图片的文件
 gulp.task("copy", () => {
   return gulp.src(copyPath, option).pipe(gulp.dest(distPath));
+});
+//复制不包含less和图片的文件(只改动有变动的文件）
+gulp.task("copyChange", () => {
+  return gulp
+    .src(copyPath, option)
+    .pipe(changed(distPath))
+    .pipe(gulp.dest(distPath));
 });
 
 // 压缩wxml
@@ -74,6 +83,17 @@ gulp.task("tsCompile", () => {
     .pipe(gulpif(!isProd, sourcemaps.init()))
     .pipe(tsProject())
     .js.pipe(gulpif(!isProd, sourcemaps.write()))
+    .pipe(gulp.dest(distPath));
+});
+
+gulp.task("uglifyJs", () => {
+  return gulp
+    .src(["!dist/node_modules/**", "!dist/miniprogram_npm/**", "dist/**/*.js"])
+    .pipe(
+      uglify({
+        compress: true
+      })
+    )
     .pipe(gulp.dest(distPath));
 });
 
@@ -160,9 +180,15 @@ gulp.task(
   "dev",
   gulp.series(
     "clean",
-    gulp.parallel("copy", "wxml", "wxss", "img", "tsCompile"),
-    "copyNodeModules",
-    "generatePackageJson",
+    gulp.parallel(
+      "copy",
+      "wxml",
+      "wxss",
+      "img",
+      "tsCompile",
+      "copyNodeModules",
+      "generatePackageJson"
+    ),
     "watch"
   )
 );
@@ -172,9 +198,16 @@ gulp.task(
   "build",
   gulp.series(
     "clean",
-    gulp.parallel("copy", "wxml", "wxss", "img", "tsCompile"),
-    "copyNodeModules",
-    "generatePackageJson"
+    gulp.parallel(
+      "copy",
+      "wxml",
+      "wxss",
+      "img",
+      "tsCompile",
+      "copyNodeModules",
+      "generatePackageJson"
+    ),
+    "uglifyJs"
   )
 );
 

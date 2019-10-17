@@ -18,8 +18,6 @@ Page({
     });
   },
   toggleImg() {
-    console.log(111);
-
     this.setData!({
       showImg: !this.data.showImg
     });

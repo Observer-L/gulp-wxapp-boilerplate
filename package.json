@@ -38,6 +38,8 @@
     "gulp-rename": "^1.4.0",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-typescript": "^5.0.1",
+    "gulp-uglify": "^3.0.2",
+    "gulp-uglify-es": "^1.0.4",
     "husky": "^3.0.9",
     "prettier": "^1.18.2",
     "pretty-quick": "^2.0.0",
