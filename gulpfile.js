@@ -8,6 +8,8 @@ const changed = require("gulp-changed");
 const imagemin = require("gulp-imagemin");
 const sourcemaps = require("gulp-sourcemaps");
 const ts = require("gulp-typescript");
+const postcss = require("gulp-postcss");
+const autoprefixer = require("autoprefixer");
 const tsProject = ts.createProject("tsconfig.json");
 const projectConfig = require("./package.json");
 const jsonTransform = require("gulp-json-transform");
@@ -65,6 +67,7 @@ const wxss = () => {
   return gulp
     .src(lessFiles)
     .pipe(less())
+    .pipe(postcss([autoprefixer()]))
     .pipe(
       rename({
         extname: ".wxss"
