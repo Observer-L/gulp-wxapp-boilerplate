@@ -29,6 +29,7 @@
     "del": "^5.1.0",
     "gulp": "^4.0.2",
     "gulp-changed": "^4.0.2",
+    "gulp-htmlmin": "^5.0.1",
     "gulp-if": "^3.0.0",
     "gulp-imagemin": "^6.1.1",
     "gulp-json-transform": "^0.4.7",
