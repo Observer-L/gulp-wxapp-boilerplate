@@ -1,12 +1,10 @@
 {
-  "extends": [
-    "tslint:latest",
-    "tslint-config-alloy"
-  ],
+  "extends": ["tslint:latest", "tslint-config-alloy"],
   "linterOptions": {
-    "exclude": [
-      "**/node_modules/**"
-    ]
+    "exclude": ["**/node_modules/**"]
   },
-  "rules": {}
+  "rules": {
+    "no-invalid-this": false,
+    "no-non-null-assertion": false
+  }
 }
