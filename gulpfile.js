@@ -3,8 +3,9 @@ const $ = require("gulp-load-plugins")();
 const del = require("del");
 const path = require("path");
 const autoprefixer = require("autoprefixer");
-const pngquant = require("pngquant");
+const pngquant = require("imagemin-pngquant");
 const uglifyjs = require("uglify-es");
+const px2rpx = require("postcss-px2rpx");
 const composer = require("gulp-uglify/composer");
 const minifyJs = composer(uglifyjs, console);
 const jsonTransform = require("gulp-json-transform");
@@ -12,14 +13,10 @@ const tsProject = $.typescript.createProject("tsconfig.json");
 const pkg = require("./package.json");
 
 /* 文件路径 */
-const option = {
-  base: "src",
-  allowEmpty: true
-};
 const distPath = "dist";
 const wxmlFiles = "src/**/*.wxml";
-const lessFiles = "src/**/*.less";
-const imgFiles = "src/assets/images/*.{png,jpg,gif,ico}";
+const lessFiles = ["src/**/!(_)*.less"];
+const imgFiles = "src/assets/images/*.{png,jpg,jpeg,gif,ico,svg}";
 const jsonFiles = "src/**/*.json";
 const tsFiles = ["src/**/*.ts"];
 const copyPath = ["src/**/!(_)*.*", "!src/**/*.less", "!src/**/*.ts"];
@@ -30,25 +27,41 @@ function logError(e) {
   console.error(e.message);
   this.emit("end");
 }
-/* 任务 */
-// 清除dist
+
+/****************************/
+/*****************************
+ ***         TASKS         ***
+ ****************************/
+/****************************/
+
+/**
+ * @description 清空非npm构建包dist目录文件
+ */
 gulp.task("clean", () => {
   return del(["dist/**", "!dist/miniprogram_npm/**"]);
 });
 
-// 复制不包含less和图片的文件
+/**
+ * @description 复制不包含less和图片的文件
+ */
 gulp.task("copy", () => {
-  return gulp.src(copyPath, option).pipe(gulp.dest(distPath));
+  return gulp.src(copyPath).pipe(gulp.dest(distPath));
 });
-//复制不包含less和图片的文件(只改动有变动的文件）
+
+/**
+ * @description 复制不包含less和图片的文件(只改动有变动的文件）
+ */
 gulp.task("copyChange", () => {
   return gulp
-    .src(copyPath, option)
+    .src(copyPath)
     .pipe($.changed(distPath))
     .pipe(gulp.dest(distPath));
 });
 
-// 压缩wxml
+/**
+ * @description 压缩wxml，生产环境任务
+ * @options 去空，去注释，补全标签
+ */
 gulp.task("minify-wxml", () => {
   const options = {
     collapseWhitespace: true,
@@ -61,7 +74,9 @@ gulp.task("minify-wxml", () => {
     .pipe(gulp.dest(distPath));
 });
 
-//压缩json
+/**
+ * @description 压缩json，生产环境任务
+ */
 gulp.task("minify-json", function() {
   return gulp
     .src(jsonFiles)
@@ -69,19 +84,22 @@ gulp.task("minify-json", function() {
     .pipe(gulp.dest(distPath));
 });
 
-// 编译less文件
+/**
+ * @description 编译less，补全、压缩样式文件
+ */
 gulp.task("compile-less", () => {
   const postcssOptions = [
+    px2rpx(),
     autoprefixer({
       overrideBrowserslist: ["ios >= 8", "android >= 4.1"]
     })
   ];
   return gulp
-    .src(lessFiles, option)
+    .src(lessFiles)
     .pipe($.if(!isProd, $.sourcemaps.init()))
     .pipe($.less().on("error", logError))
-    .pipe($.if(isProd, $.postcss(postcssOptions)))
     .pipe($.if(isProd, $.cssnano()))
+    .pipe($.postcss(postcssOptions))
     .pipe($.if(!isProd, $.sourcemaps.write()))
     .pipe(
       $.rename({
@@ -91,7 +109,9 @@ gulp.task("compile-less", () => {
     .pipe(gulp.dest(distPath));
 });
 
-// 压缩图片
+/**
+ * @description 压缩图片
+ */
 gulp.task("minify-image", () => {
   const options = {
     progressive: true,
@@ -108,9 +128,11 @@ gulp.task("minify-image", () => {
     .pipe(gulp.dest("src/assets/images/"));
 });
 
-// 编译ts
+/**
+ * @description 编译、压缩ts
+ */
 gulp.task("compile-ts", () => {
-  const minifyJsOptions = {
+  const options = {
     compress: {
       drop_console: true,
       drop_debugger: true
@@ -121,18 +143,18 @@ gulp.task("compile-ts", () => {
     .pipe($.if(!isProd, $.sourcemaps.init()))
     .pipe(tsProject())
     .on("error", logError)
-    .js.pipe($.if(isProd, minifyJs(minifyJsOptions)))
+    .js.pipe($.if(isProd, minifyJs(options)))
     .pipe($.if(!isProd, $.sourcemaps.write()))
     .pipe(gulp.dest(distPath));
 });
 
-// npm支持
-const nodeModulesCopyPath = Object.keys(pkg.dependencies).map(
-  d => "node_modules/" + d + "/**/*"
-);
-
-//复制依赖的node_modules文件
+/**
+ * @description npm支持1，复制依赖的node_modules文件
+ */
 gulp.task("copyNodeModules", () => {
+  const nodeModulesCopyPath = Object.keys(pkg.dependencies).map(
+    d => "node_modules/" + d + "/**/*"
+  );
   return gulp
     .src(nodeModulesCopyPath, {
       base: ".",
@@ -140,7 +162,10 @@ gulp.task("copyNodeModules", () => {
     })
     .pipe(gulp.dest(distPath));
 });
-// 根据denpende生成package.json
+
+/**
+ * @description npm支持2，根据dependencies生成package.json
+ */
 gulp.task("generatePackageJson", () => {
   return gulp
     .src("./package.json")
@@ -154,7 +179,9 @@ gulp.task("generatePackageJson", () => {
     .pipe(gulp.dest(distPath));
 });
 
-//编译
+/**
+ * @description 通用编译
+ */
 gulp.task(
   "compile",
   gulp.series(
@@ -169,7 +196,9 @@ gulp.task(
   )
 );
 
-//监听
+/**
+ * @description 编译、监听
+ */
 gulp.task(
   "watch",
   gulp.series("compile", () => {
@@ -182,7 +211,9 @@ gulp.task(
   })
 );
 
-//构建
+/**
+ * @description 生产环境打包
+ */
 gulp.task(
   "build",
   gulp.series(
@@ -192,7 +223,7 @@ gulp.task(
 );
 
 /**
- * create 自动创建page or component
+ * @description CLI快建模板
  * @example
  *   gulp create -p mypage           创建名称为mypage的page文件
  *   gulp create -t mytpl            创建名称为mytpl的template文件

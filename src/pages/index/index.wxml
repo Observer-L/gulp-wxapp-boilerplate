@@ -12,4 +12,5 @@
   <!-- 注释 -->
   <van-button type="primary" bind:click="toggleImg">vantUI npm构建测试</van-button>
   <image src="../../assets/images/test.jpg" hidden="{{!showImg}}" />
+  <image src="../../assets/images/test.gif" hidden="{{showImg}}" />
 </view>

@@ -1,0 +1,21 @@
+/*
+ * @Author: Observer-L
+ * @Email: epcobserver@gmail.com
+ * @Github: https://github.com/observer-l
+ * @Date: 2019-10-18 15:39:05
+ * @Description: mixins定义文件
+ */
+
+/**
+ * @Description: 超过行数，文字截取
+ * @param {clamp: number} 行数
+ */
+.textoverflow(@clamp: 1) {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: $clamp;
+  -webkit-box-orient: vertical;
+}
