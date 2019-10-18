@@ -1,5 +1,5 @@
 /**app.wxss**/
-@import './assets/styles/base.less';
+@import "./assets/styles/base.less";
 
 .container {
   height: 100%;
@@ -9,4 +9,9 @@
   justify-content: space-between;
   padding: 200rpx 0;
   box-sizing: border-box;
+
+  // autoprefixer test
+  ::placeholder {
+    color: gray;
+  }
 }

@@ -6,7 +6,7 @@
 
 # gulp-wxapp-boilerplate
 
-> 基于Gulp构建的微信小程序开发工作流
+> 基于 Gulp 构建的微信小程序开发工作流
 
 <div align=center>
 
@@ -20,23 +20,27 @@
 
 ✅ 命令行快建模板文件
 
-✅ 图片压缩
+✅ 资源压缩
 
-✅ less样式预编译
+✅ SourceMaps 支持
 
-✅ Typescript开发
+✅ less 样式预编译
 
-✅ tslint代码检查
+✅ Typescript 开发
+
+✅ tslint 代码检查
+
+✅ npm 依赖包自动打包
 
 🔲 小程序云开发支持
-
-🔲 npm 依赖包自动打包
 
 🔲 分包处理
 
 ## 🔩 项目结构
+
 ```
 ├─dist                             // 编译之后的项目文件
+│  │  miniprogram_npm              // npm构建第三方包
 ├─src                              // 开发目录
 │  │  app.ts                       // 小程序入口文件
 │  │  app.json
@@ -62,17 +66,20 @@
 ```
 
 ## 📋 使用指南
+
 1. 下载模板并安装依赖
+
 ```cnpm
 git clone https://github.com/Observer-L/gulp-wxapp-boilerplate.git
 npm install
 ```
+
 2. 快速创建页面或组件
+
 ```js
 gulp create -p mypage           //创建名为mypage的page文件
 gulp create -c mycomponent      //创建名为mycomponent的component文件
 gulp create -s index -p mypage  //复制pages/index中的文件创建名称为mypage的页面
 ```
+
 2. npm run dev
-
-
