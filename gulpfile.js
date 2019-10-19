@@ -89,7 +89,11 @@ gulp.task("minify-json", function() {
  */
 gulp.task("compile-less", () => {
   const postcssOptions = [
-    px2rpx(),
+    px2rpx({
+      screenWidth: 750, // 设计稿屏幕, 默认750
+      wxappScreenWidth: 750, // 微信小程序屏幕, 默认750
+      remPrecision: 6 // 小数精度, 默认6
+    }),
     autoprefixer({
       overrideBrowserslist: ["ios >= 8", "android >= 4.1"]
     })
@@ -141,6 +145,8 @@ gulp.task("compile-ts", () => {
   return tsProject
     .src()
     .pipe($.if(!isProd, $.sourcemaps.init()))
+    .pipe($.eslint())
+    .pipe($.eslint.format())
     .pipe(tsProject())
     .on("error", logError)
     .js.pipe($.if(isProd, minifyJs(options)))

@@ -31,7 +31,8 @@
       "outputPath": ""
     }
   },
-  "appid": "wx7c37dcfdb49ba3e3",
+  "cloudfunctionRoot": "cloud_functions/",
+  "appid": "wxc50d144ec6dee31c",
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
   "condition": {}
