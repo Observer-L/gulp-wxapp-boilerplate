@@ -10,7 +10,7 @@
     <text class="user-motto">{{motto}}</text>
   </view>
   <!-- 注释 -->
-  <van-button type="primary" bind:click="toggleImg">vantUI npm构建测试</van-button>
-  <image src="../../assets/images/test.jpg" hidden="{{!showImg}}" />
-  <image src="../../assets/images/test.gif" hidden="{{showImg}}" />
+  <van-button type="primary">vantUI npm构建测试</van-button>
+  <!-- 请求接口测试 -->
+  <button bindtap="testRequest">请求接口测试</button>
 </view>

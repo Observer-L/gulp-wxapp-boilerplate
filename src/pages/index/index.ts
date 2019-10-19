@@ -1,6 +1,6 @@
 // 获取应用实例
 import { IMyApp } from "../../app";
-
+import request from "../../utils/request/index";
 const app = getApp<IMyApp>();
 
 Page({
@@ -8,7 +8,6 @@ Page({
     motto: "点击 “编译” 以构建",
     userInfo: {},
     hasUserInfo: false,
-    showImg: false,
     canIUse: wx.canIUse("button.open-type.getUserInfo")
   },
   // 事件处理函数
@@ -17,10 +16,8 @@ Page({
       url: "../logs/logs"
     });
   },
-  toggleImg() {
-    this.setData!({
-      showImg: !this.data.showImg
-    });
+  testRequest() {
+    request.get("http://api.icndb.com/jokes/random").then(r => console.log(r));
   },
   onLoad() {
     if (app.globalData.userInfo) {
