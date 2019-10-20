@@ -77,18 +77,16 @@ export function formatTime(date: Date): string {
   const hour = date.getHours();
   const minute = date.getMinutes();
   const second = date.getSeconds();
-
+  const formatNumber = (n: number) => {
+    const str = n.toString();
+    return str[1] ? str : "0" + str;
+  };
   return (
     [year, month, day].map(formatNumber).join("/") +
     " " +
     [hour, minute, second].map(formatNumber).join(":")
   );
 }
-
-const formatNumber = (n: number) => {
-  const str = n.toString();
-  return str[1] ? str : "0" + str;
-};
 
 export {
   isObject,

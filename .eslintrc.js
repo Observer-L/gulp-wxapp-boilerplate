@@ -65,12 +65,8 @@ module.exports = {
         ignoreDestructuring: true
       }
     ],
-    "no-console": [
-      "warn",
-      {
-        allow: ["warn", "error"]
-      }
-    ],
+    "@typescript-eslint/no-non-null-assertion": 0,
+    "no-console": 0,
     "no-unused-expressions": [
       "warn",
       {
