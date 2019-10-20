@@ -23,10 +23,6 @@ const copyPath = ["src/**/!(_)*.*", "!src/**/*.less", "!src/**/*.ts"];
 
 const isProd = process.env.NODE_ENV === "production";
 
-function logError(e) {
-  console.error(e.message);
-  this.emit("end");
-}
 
 /****************************/
 /*****************************
@@ -77,7 +73,7 @@ gulp.task("minify-wxml", () => {
 /**
  * @description 压缩json，生产环境任务
  */
-gulp.task("minify-json", function() {
+gulp.task("minify-json", function () {
   return gulp
     .src(jsonFiles)
     .pipe($.jsonminify2())
@@ -100,8 +96,9 @@ gulp.task("compile-less", () => {
   ];
   return gulp
     .src(lessFiles)
+    .pipe($.plumber())
     .pipe($.if(!isProd, $.sourcemaps.init()))
-    .pipe($.less().on("error", logError))
+    .pipe($.less())
     .pipe($.if(isProd, $.cssnano()))
     .pipe($.postcss(postcssOptions))
     .pipe($.if(!isProd, $.sourcemaps.write()))
@@ -119,11 +116,9 @@ gulp.task("compile-less", () => {
 gulp.task("minify-image", () => {
   const options = {
     progressive: true,
-    svgoPlugins: [
-      {
-        removeViewBox: false
-      }
-    ],
+    svgoPlugins: [{
+      removeViewBox: false
+    }],
     use: [pngquant()]
   };
   return gulp
@@ -144,11 +139,12 @@ gulp.task("compile-ts", () => {
   };
   return tsProject
     .src()
+    .pipe($.plumber())
     .pipe($.if(!isProd, $.sourcemaps.init()))
     .pipe($.eslint())
     .pipe($.eslint.format())
     .pipe(tsProject())
-    .on("error", logError)
+    // .on("error", logError)
     .js.pipe($.if(isProd, minifyJs(options)))
     .pipe($.if(!isProd, $.sourcemaps.write()))
     .pipe(gulp.dest(distPath));
